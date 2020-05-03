@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.6
+    volumes:
+      - mysql_storage_new:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: redhat
+      MYSQL_DATABASE: webpage
+      MYSQL_USER: sabari
+      MYSQL_PASSWORD: redhat
+                 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - 8001:80
+    environment:
+      PMA_USER: sabari 
+      PMA_PASSWORD: redhat
+      PMA_HOST: 172.17.0.3
+    depends_on:
+      - db
+       
+  httpd:
+    hostname: test.local.com
+    restart: always
+    image: httpd:latest
+    depends_on:
+        - db
+    ports:
+      - 8080:80
+    volumes:
+      - httpd_new:/var/www/html
+    
+volumes:
+      mysql_storage_new:
+      httpd_new:
